@@ -148,17 +148,15 @@ opam:
 	@ opam lint
 	@ opam publish -v $(DATE) $(THIS) $(ARCHIVE)
 
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-# Copying pprint into Menhir's working directory.
+# Vendoring this library inside Menhir.
 
-MENHIR_WORKING_COPY=$(HOME)/dev/menhir
-PPRINT_COPY=$(MENHIR_WORKING_COPY)/pprint
-
-.PHONY: menhir
-menhir: clean
-# Copy our source files to the Menhir repository.
-	@ rm -rf $(PPRINT_COPY)
-	@ cp -r $(shell pwd) $(PPRINT_COPY)
-# Remove a number of unneeded files and subdirectories.
-	@ (cd $(PPRINT_COPY) && rm -rf .git .gitignore Makefile README.md TODO.md bench blog header test src/Makefile)
+.PHONY: vendor
+vendor:
+# Copy the library to Menhir's working directory.
+	@ make clean
+	@ make -f Makefile.vendor \
+	    THIS=pprint \
+	    CLIENTS=$(HOME)/dev/menhir \
+	    SUPERFLUOUS=".git .gitignore Makefile Makefile.vendor" \
